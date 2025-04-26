@@ -48,15 +48,27 @@ body {
 }
 
 .character-card {
+    animation: fade-in 0.3s ease-in-out;
     border-radius: var(--border-radius);
     padding: 1vh;
     background-color: var(--background-card-color);
 }
 
-@keyframes text-animation {
-    0% { background-position: -100% 50%; }
-    50% { background-position: 0% 50%; }
-    100% { background-position: 100% 50%; }
+@keyframes aurora-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes fade-in {
+    0% { 
+        scale: 0.8;
+        opacity: 0;
+    }
+    100% { 
+        opacity: 1; 
+        scale: 1;
+    }
 }
 
 h1 {
@@ -65,10 +77,18 @@ h1 {
 }
 
 .animated-text {
-    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--primary-color));
-    background-size: 200% auto;
+    font-size: 8vh;
+    font-weight: lighter;
+    background: linear-gradient(
+        120deg,
+        #a787f1,
+        #6ce3ff,
+        #ff944c,
+        #94f1a7,
+        #a787f1
+    );
+    background-size: 300% 300%;
     background-clip: text;
-    -webkit-background-clip: text;
     color: transparent;
-    animation: text-animation 7.5s ease-in-out infinite;
+    animation: aurora-shift 12s ease-in-out infinite;
 }
