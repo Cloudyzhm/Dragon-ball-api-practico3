@@ -1,0 +1,74 @@
+:root {
+    --background-color: #131314;
+    --background-card-color: #1b1b1b;
+    --text-color: #f3f3f3;
+    --primary-color: #a787f1;
+    --secondary-color: #ff944c;
+    --border-radius: 5%;
+    --font-size-large: 1.5rem;
+}
+
+header{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2vh;
+}
+
+main {
+    height: 100vh;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--background-color);
+    padding: 20px;
+    color: var(--text-color);
+}
+
+#characters {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2vh;
+}
+
+#characters img {
+    width: 37vw;
+    max-width: 30vh;
+    object-fit: contain;
+    aspect-ratio: 1/1;
+}
+
+#characters h2 {
+    text-align: center;
+    color: var(--primary-color);
+    font-size: var(--font-size-large);
+}
+
+.character-card {
+    border-radius: var(--border-radius);
+    padding: 1vh;
+    background-color: var(--background-card-color);
+}
+
+@keyframes text-animation {
+    0% { background-position: -100% 50%; }
+    50% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+h1 {
+    font-size: 8vh;
+    font-weight: bold;
+}
+
+.animated-text {
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--primary-color));
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: text-animation 7.5s ease-in-out infinite;
+}
