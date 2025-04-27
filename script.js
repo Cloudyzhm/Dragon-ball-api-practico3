@@ -1,67 +1,94 @@
-const api_url = "https://dragonball-api.com/api/characters"
-const charactersContainer = document.getElementById("characters")
-const raceSelect = document.getElementById("raceFilter")
-let allCharacters = []
+const api_url = "https://dragonball-api.com/api/characters";
+const charactersContainer = document.getElementById("characters");
+const raceSelect = document.getElementById("raceFilter");
 
-async function fetchCharacters() {
+let allCharacters = [];
+const allRaces = [
+    "Saiyan",
+    "Namekian",
+    "Human",
+    "Frieza Race",
+    "Android",
+    "Majin",
+    "God",
+    "Angel",
+    "Unknown",
+    "Jiren Race",
+    "Evil",
+    "Nucleico benigno",
+    "Nucleico"
+];
+let nextPageUrl = null;
+
+// Agregar opción "Todos" al cargar
+const allOption = document.createElement("option");
+allOption.value = "all";
+allOption.textContent = "Todos";
+raceSelect.appendChild(allOption);
+
+async function fetchApi(url) {
     try {
-        const response = await fetch(api_url)
+        const response = await fetch(url);
         if (!response.ok) {
-            charactersContainer.innerHTML = `<p>API status: ${response.status}</p>`
-            return
+            throw new Error("Error en la respuesta de la API");
         }
-        const data = await response.json()
-        allCharacters = data.items
+        const data = await response.json();
+        nextPageUrl = data.links.next;
+        allCharacters = [...allCharacters, ...data.items];
 
-        populateRaceFilter(allCharacters)
-        renderCharacters(allCharacters)
+        renderCharacters(allCharacters, raceSelect.value);
     } catch (error) {
-        console.error("Error al obtener personajes:", error)
+        console.error("Error al obtener personajes:", error);
     }
 }
 
-function renderCharacters(characters, raceFilter = null) {
-    charactersContainer.innerHTML = ""
+function renderCharacters(characters, raceFilter = "all") {
+    charactersContainer.innerHTML = "";
 
-    if (raceFilter) {
-        characters = characters.filter(character => character.race === raceFilter)
-    }
+    const filteredCharacters = raceFilter === "all" ? characters :
+    characters.filter(character => character.race === raceFilter);
 
-    characters.forEach(character => {
-        charactersContainer.innerHTML += `
-            <div class="character-card">
-                <h2>${character.name}</h2>
-                <img src="${character.image}" alt="${character.name}">
-                <p>Raza: ${character.race}</p>
-            </div>
-        `
-    })
-}
+    filteredCharacters.forEach(character => {
+        const card = document.createElement("div");
+        const name = document.createElement("h2");
+        const image = document.createElement("img");
+        const race = document.createElement("p");
 
-function populateRaceFilter(characters) {
-    const races = []
+        card.id = character.name;
+        card.classList.add("character-card");
+        name.textContent = character.name;
+        image.src = character.image;
+        race.textContent = `Raza: ${character.race}`;
 
-    characters.forEach(c => {
-        if (!races.includes(c.race)) {
-            races[races.length] = c.race
-        }
-    })
+        card.appendChild(name);
+        card.appendChild(image);
+        card.appendChild(race);
 
-    races.forEach(race => {
-        const option = document.createElement("option")
-        option.innerHTML = `
-            <option value="${race}">${race}</option>
-        `
-
-        option.value = race
-        option.textContent = race
-        raceSelect.appendChild(option)
-    })
+        charactersContainer.appendChild(card);
+    });
 }
 
 raceSelect.addEventListener("change", () => {
-    const selectedRace = raceSelect.value
-    renderCharacters(allCharacters, selectedRace === "all" ? null : selectedRace)
-})
+    renderCharacters(allCharacters, raceSelect.value);
+});
 
-fetchCharacters()
+window.addEventListener("scroll", () => {
+    const scrollTop = document.documentElement.scrollTop;
+    const windowHeight = window.innerHeight;
+    const scrollHeight = document.documentElement.scrollHeight;
+    const triggerPoint = scrollHeight * 0.5;
+
+    if ((scrollTop + windowHeight) >= triggerPoint && nextPageUrl !== null) {
+        fetchApi(nextPageUrl);
+    }
+});
+
+
+allRaces.forEach(race => {
+    const option = document.createElement("option");
+    option.value = race;
+    option.textContent = race;
+    raceSelect.appendChild(option);
+});
+
+fetchApi(api_url);
