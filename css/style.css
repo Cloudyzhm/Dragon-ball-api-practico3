@@ -1,9 +1,10 @@
 :root {
-    --background-color: #131314;
-    --background-card-color: #1b1b1b;
-    --text-color: #f3f3f3;
-    --primary-color: #a787f1;
-    --secondary-color: #ff944c;
+    --background-color: #0f0f10;
+    --background-card-color: #1a1a1d;
+    --text-color: #e4e4e7;
+    --primary-color: #E9A6A6;
+    --secondary-color: #ff7b54;
+    
     --border-radius: 5%;
     --font-size-large: 1.5rem;
 }

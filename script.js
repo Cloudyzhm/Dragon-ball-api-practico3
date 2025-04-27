@@ -3,7 +3,7 @@ const charactersContainer = document.getElementById("characters");
 const raceSelect = document.getElementById("raceFilter");
 
 let allCharacters = [];
-const allRaces = [
+const initialRaces = [
     "Saiyan",
     "Namekian",
     "Human",
@@ -19,22 +19,35 @@ const allRaces = [
     "Nucleico"
 ];
 let nextPageUrl = null;
+let totalItems = null;
 
-// Agregar opción "Todos" al cargar
 const allOption = document.createElement("option");
 allOption.value = "all";
 allOption.textContent = "Todos";
 raceSelect.appendChild(allOption);
 
+initialRaces.forEach(race => {
+    const option = document.createElement("option");
+    option.value = race;
+    option.textContent = race;
+    raceSelect.appendChild(option);
+});
+
 async function fetchApi(url) {
     try {
         const response = await fetch(url);
         if (!response.ok) {
-            throw new Error("Error en la respuesta de la API");
+            throw new Error(`Error en la respuesta de la API: ${response.status}`);
         }
         const data = await response.json();
         nextPageUrl = data.links.next;
-        allCharacters = [...allCharacters, ...data.items];
+        totalItems = data.meta.totalItems;
+
+        const newCharacters = data.items.filter(newItem =>
+            !allCharacters.some(existingItem => existingItem.id === newItem.id)
+        );
+        
+        allCharacters = allCharacters.concat(newCharacters);
 
         renderCharacters(allCharacters, raceSelect.value);
     } catch (error) {
@@ -46,7 +59,7 @@ function renderCharacters(characters, raceFilter = "all") {
     charactersContainer.innerHTML = "";
 
     const filteredCharacters = raceFilter === "all" ? characters :
-    characters.filter(character => character.race === raceFilter);
+        characters.filter(character => character.race === raceFilter);
 
     filteredCharacters.forEach(character => {
         const card = document.createElement("div");
@@ -69,26 +82,18 @@ function renderCharacters(characters, raceFilter = "all") {
 }
 
 raceSelect.addEventListener("change", () => {
-    renderCharacters(allCharacters, raceSelect.value);
+    fetchApi(`${api_url}?limit=${totalItems}`);
 });
 
 window.addEventListener("scroll", () => {
-    const scrollTop = document.documentElement.scrollTop;
-    const windowHeight = window.innerHeight;
-    const scrollHeight = document.documentElement.scrollHeight;
-    const triggerPoint = scrollHeight * 0.5;
+    if (!nextPageUrl) return;
 
-    if ((scrollTop + windowHeight) >= triggerPoint && nextPageUrl !== null) {
+    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+    const triggerPoint = scrollHeight - clientHeight;
+
+    if (scrollTop >= triggerPoint) {
         fetchApi(nextPageUrl);
     }
-});
-
-
-allRaces.forEach(race => {
-    const option = document.createElement("option");
-    option.value = race;
-    option.textContent = race;
-    raceSelect.appendChild(option);
 });
 
 fetchApi(api_url);
