@@ -91,6 +91,10 @@ main {
     gap: 2vh;
 }
 
+.character-card p {
+    text-align: center;
+}
+
 @keyframes aurora-shift {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
