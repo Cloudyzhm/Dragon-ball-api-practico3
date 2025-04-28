@@ -89,7 +89,7 @@ window.addEventListener("scroll", () => {
     if (!nextPageUrl) return
 
     const { scrollTop, scrollHeight, clientHeight } = document.documentElement
-    const triggerPoint = scrollHeight - clientHeight
+    const triggerPoint = scrollHeight - clientHeight - 50
 
     if (scrollTop >= triggerPoint) {
         fetchApi(nextPageUrl)
